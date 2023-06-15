@@ -23,23 +23,55 @@ public class BlobVolumeViewModel
         blobTemp.Subscribe(_ => CheckVaporizeTemp(_));
     }
 
+    public void WaterTouchActions()
+    {
+        //Функция вызывается при касании с водой
+        blobVolume.Value += GlobalModel.Instance.BlobVolumeFilled;
+        CheckMaxBlobVolume();
+    }
+
     private void CheckVaporizeTemp(float blobTemp)
     {
+        //Функция вызывается каждый раз при изменении температуры. Проверяет, нужно ли уменьшать объем капли сейчас.
         if(blobTemp >= GlobalModel.Instance.VaporizationTemp && volumeDecreaseFromHighTemp == null && blobVolume.Value > 0)
         {
-            volumeDecreaseFromHighTemp = VolumeIncreaseCoroutine();
+            volumeDecreaseFromHighTemp = VolumeDecreaseCoroutine();
             coroutineRunner.RunCoroutine(volumeDecreaseFromHighTemp);
         }
-        else if ((blobTemp < GlobalModel.Instance.VaporizationTemp && volumeDecreaseFromHighTemp != null) || blobVolume.Value <= 0)
+        else if ((blobTemp < GlobalModel.Instance.VaporizationTemp && volumeDecreaseFromHighTemp != null))
         {
-            blobVolume.Value = 0;
             coroutineRunner.StopOneCoroutine(volumeDecreaseFromHighTemp);
             volumeDecreaseFromHighTemp = null;
+        }
+        CheckMinBlobVolume();
+    }
+
+    private void CheckMinBlobVolume()
+    {
+        //Проверка, что объем не стал меньше 0. Вызывается везде, где уменьшается температура
+        if(blobVolume.Value <= 0)
+        {
+            blobVolume.Value = 0;//Конец игры
+            if(volumeDecreaseFromHighTemp != null)
+            {
+                coroutineRunner.StopOneCoroutine(volumeDecreaseFromHighTemp);
+                volumeDecreaseFromHighTemp = null;
+            }
+        }
+    }
+
+    private void CheckMaxBlobVolume()
+    {
+        //Проверка, что объем не стал больше 100. Вызывается везде, где увеличивается температура
+        if (blobVolume.Value >= 100)
+        {
+            blobVolume.Value = 100;
         }
     }
 
     private void CheckSizeChangeFromVolume(float blobVolume)
     {
+        //Функция для пересчета размера капли в зависимости от объема
         if (blobVolume >= GlobalModel.Instance.MaxVolumeForBlobSize)
         {
             blobSize.Value = GlobalModel.Instance.MaxBlobSize;
@@ -54,11 +86,12 @@ public class BlobVolumeViewModel
         }        
     }
 
-    private IEnumerator VolumeIncreaseCoroutine()
+    private IEnumerator VolumeDecreaseCoroutine()
     {
+        //Корутина для уменьшения объема капли
         while (true)
         {
-            Debug.Log("blobVolume: " + blobVolume.Value.ToString());
+            //Debug.Log("blobVolume: " + blobVolume.Value.ToString());
             blobVolume.Value -= GlobalModel.Instance.VaporizationVolumeSpeed;
             yield return new WaitForSeconds(GlobalModel.Instance.ModificationTime);
         }

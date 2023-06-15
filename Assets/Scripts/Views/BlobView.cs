@@ -7,7 +7,7 @@ public class BlobView : MonoBehaviour
     public BlobVolumeViewModel blobVolumeViewModel { get; private set; }
     private Vector3 blobStartScale;
 
-    void Start()
+    void Awake()
     {
         blobStartScale = transform.localScale;
         blobTempViewModel = new BlobTempViewModel();
