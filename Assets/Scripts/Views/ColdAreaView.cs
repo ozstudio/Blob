@@ -6,7 +6,7 @@ public class ColdAreaView : MonoBehaviour
 {
     private ColdAreaViewModel coldAreaViewModel;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         coldAreaViewModel = new ColdAreaViewModel();
     }
