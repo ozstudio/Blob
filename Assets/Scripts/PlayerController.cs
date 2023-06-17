@@ -1,7 +1,7 @@
 using UniRx;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private float _minSpeed;
     private float _currentTemp;
     private float _prevTemp;
+    
 
 
 
@@ -31,13 +32,12 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-
-        _maxSpeed = GlobalModel.Instance.StartBlobSpeed * 4;
+       
+        _maxSpeed = GlobalModel.Instance.StartBlobSpeed * 2;
         _minSpeed = GlobalModel.Instance.StartBlobSpeed / 2;
         _moveSpeed = GlobalModel.Instance.StartBlobSpeed;
         _currentTemp = GlobalModel.Instance.StartBlobTemp;
         _prevTemp = _currentTemp;
-
         Invoke("GetBlowV", 1f);
     }
 
@@ -65,10 +65,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        print(_moveSpeed);
+      
         if (_fixedJoystick.Horizontal > 0)
         {
-
             _rigidbody.velocity =
            new Vector3(1 * BlobSpeed(), _rigidbody.velocity.y, 0);
         }
@@ -77,6 +76,10 @@ public class PlayerController : MonoBehaviour
             _rigidbody.velocity =
           new Vector3(-1 * BlobSpeed(), _rigidbody.velocity.y, 0);
 
+        }
+       if(_fixedJoystick.Horizontal == 0)
+        {
+            _rigidbody.velocity = new Vector2(0,_rigidbody.velocity.y);
         }
 
     }
@@ -99,20 +102,21 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        // print(_minSpeed + ":" + _moveSpeed);
-        if (Input.GetKeyDown(KeyCode.Space))
+        
+        if (Input.GetKeyDown(KeyCode.K))
         {
-            Jump();
+
+            PlayerJump();
         }
     }
 
-    public void Jump()
+    public void PlayerJump()
     {
-
+        float jumpHeight = maxHeight * gameObject.transform.localScale.x;
         if (CheckIfGrounded())
         {
-            float jumpHeight = maxHeight * gameObject.transform.localScale.x;
-            _rigidbody.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y), ForceMode.VelocityChange);
+           
+            _rigidbody.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y), ForceMode.Impulse);
         }
 
     }
