@@ -23,8 +23,13 @@ public class GlobalModel : MonoBehaviour
     [SerializeField] private float boilingTemp;
     //Стартовый объем капли
     [SerializeField] private float startBlobVolume;
+
+    [SerializeField] private float speedIncreaseFactor;
+    [SerializeField] private float maxJumpHeight;
+
     //Стартовая скорость капли
     [SerializeField] private float startBlobSpeed;
+
     //Максимальная скорость капли
     [SerializeField] private float maxBlobSpeed;
     //Минимальная скорость капли
@@ -48,6 +53,9 @@ public class GlobalModel : MonoBehaviour
     public float BlobCoolingSpeed { get { return blobCoolingSpeed; } }
     public float VaporizationTemp { get { return vaporizationTemp; } }
     public float VaporizationVolumeSpeed { get { return vaporizationVolumeSpeed; } }
+
+    public float SpeedIncreaseFactor { get { return speedIncreaseFactor; } }
+    public float MaxJumpHeight { get { return maxJumpHeight; } }
     public float BoilingTemp { get { return boilingTemp; } }
     public float StartBlobVolume { get { return startBlobVolume; } }
     public float StartBlobSpeed { get { return startBlobSpeed; } }
