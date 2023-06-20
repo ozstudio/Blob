@@ -13,26 +13,27 @@ public class BlobView : MonoBehaviour
 
     void Awake()
     {
+        CharacterController characterController = GetComponent<CharacterController>();
         blobStartScale = transform.localScale;
         blobTempViewModel = new BlobTempViewModel();
 
-        blobMovementViewModel = new BlobMovementViewModel(blobTempViewModel.blobTemp);
+        blobMovementViewModel = new BlobMovementViewModel(blobTempViewModel.blobTemp, characterController);
 
 
         blobVolumeViewModel = new BlobVolumeViewModel(blobTempViewModel.blobTemp);
 
 
         blobVolumeViewModel.blobSize.Subscribe(_ => ChangeBlobSize(_));
-        blobMovementViewModel.movement.Subscribe(_ => BlobMovement(_));
+        blobMovementViewModel.blobMovement.Subscribe(_ => BlobMovement(_));
         
 
 
 
     }
 
-    private void BlobMovement(Vector2 _)
+    private void BlobMovement(Vector3 _)
     {
-        transform.GetComponent<Rigidbody>().velocity = _;
+        gameObject.transform.forward = _;
     }
 
    

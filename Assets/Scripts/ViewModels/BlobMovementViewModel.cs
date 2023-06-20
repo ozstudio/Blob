@@ -1,70 +1,44 @@
 using System;
 using UniRx;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.UI;
 
 public class BlobMovementViewModel 
 {
-    
-    public IObservable<Vector2> movement { get; private set; }
-    public IObservable <long> playerJump { get; private set; }
+    public ReactiveProperty<Vector3> blobMovement;
 
+    private CharacterController characterController;
+    private Vector3 playerVelocity;
+    private bool groundedPlayer;
+    private float gravityValue = -9.81f;
 
-
-
-    public ReactiveCommand Jump = new ReactiveCommand();
-
-    private GameInput _gameInput;
     private float _moveSpeed;
     private float _maxSpeed;
     private float _minSpeed;
     private float _currentTemp;
     private float _prevTemp;
-    private Rigidbody _rigidbody;
     private float _speedIncreaseFactor;
-    private Transform _raycastPoint;
-    private float _minDistanceToGround = 0.1f;
     private float _maxJumpHeight;
-    public UnityEngine.UI.Button _jumpBtn;
 
 
 
-    public BlobMovementViewModel(ReactiveProperty <float> blobTemp)
+    public BlobMovementViewModel(ReactiveProperty <float> blobTemp, CharacterController characterController)
     {
-        _jumpBtn = GameObject.FindGameObjectWithTag("JumpBtn").GetComponent<Button>();
+        blobMovement = new ReactiveProperty<Vector3>();
+        this.characterController = characterController;
+
         _maxJumpHeight = GlobalModel.Instance.MaxJumpHeight;
         _speedIncreaseFactor = GlobalModel.Instance.SpeedIncreaseFactor;
         _maxSpeed = GlobalModel.Instance.StartBlobSpeed * 2;
         _minSpeed = GlobalModel.Instance.StartBlobSpeed / 2;
         _moveSpeed = GlobalModel.Instance.StartBlobSpeed;
         _currentTemp = GlobalModel.Instance.StartBlobTemp;
-       
+
         _prevTemp = _currentTemp;
 
-        _raycastPoint = 
-            GameObject.FindGameObjectWithTag("CheckGroundPoint").transform;
-
-        _gameInput = 
-            GameObject.FindGameObjectWithTag("GameInputJoystick").GetComponent<GameInput>();
-
-        _rigidbody = 
-            GameObject.FindGameObjectWithTag("Player").GetComponent<Rigidbody>();
-
-        
-
-
-        movement = Observable.EveryFixedUpdate()
-            .Select(_ =>
-            {
-                var x = _gameInput._fixedJoystick.Horizontal;
-                var y = _gameInput._fixedJoystick.Vertical;
-
-                Vector2 inputVector = _gameInput.GetMovementVectorNormalized();
-                Vector2 moveDir = new Vector2(inputVector.x, _rigidbody.velocity.y);
-
-                return new Vector2(moveDir.x * BlobSpeed(), _rigidbody.velocity.y);
-
-            });
+        GameInput.Instance.OnJump += GameInput_OnJump;
+        GameInput.Instance.OnMove += GameInput_OnMove;
 
         blobTemp.Subscribe(blobTemp =>
         {
@@ -81,19 +55,20 @@ public class BlobMovementViewModel
 
             }
 
-        });
-
-        _jumpBtn.OnClickAsObservable().Subscribe(_ => PlayerJump());
-
-       
-        playerJump = Observable.EveryUpdate()
-            .Where(_ => Input.GetKeyDown(KeyCode.K));
-
-            playerJump.Subscribe(_ => PlayerJump());
+        });    
     }
 
+    private void GameInput_OnMove(object sender, GameInput.MovementVectorEventArgs e)
+    {
+        PlayerMove(e.movementVector);
+    }
 
-    float BlobSpeed()
+    private void GameInput_OnJump(object sender, EventArgs e)
+    {
+        PlayerJump();
+    }
+
+    private float BlobSpeed()
     {
         if (_moveSpeed >= _maxSpeed)
         {
@@ -107,19 +82,44 @@ public class BlobMovementViewModel
 
     }
 
-    void PlayerJump()
+    
+
+    private void PlayerJump()
     {
-
-        float jumpHeight = _maxJumpHeight * _rigidbody.transform.localScale.x;
-        if (CheckIfGrounded())
+        groundedPlayer = characterController.isGrounded;
+        if (groundedPlayer && playerVelocity.y < 0)
         {
-              _rigidbody.AddForce(Vector3.up * Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y), ForceMode.Impulse);
-
+            playerVelocity.y = 0f;
         }
 
+        float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
+        if (groundedPlayer)
+        {
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+        }
+
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        characterController.Move(playerVelocity * Time.deltaTime);
     }
 
-    bool CheckIfGrounded()
+    private void PlayerMove(Vector2 movement)
+    {
+        groundedPlayer = characterController.isGrounded;
+        if (groundedPlayer && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0f;
+        }
+
+        Vector3 move = new Vector3(movement.x, playerVelocity.y, 0);
+        characterController.Move(move * Time.deltaTime * BlobSpeed());
+
+        if (move != Vector3.zero)
+        {
+            blobMovement.Value = move;
+        }
+    }
+
+    /*private bool CheckIfGrounded()
     {
         bool grounded = false;
         RaycastHit hit;
@@ -139,6 +139,6 @@ public class BlobMovementViewModel
             }
         }
         return grounded;
-    }
+    }*/
 
 }
