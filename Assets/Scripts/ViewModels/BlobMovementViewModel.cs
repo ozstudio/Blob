@@ -11,7 +11,9 @@ public class BlobMovementViewModel
     private CharacterController characterController;
     private Vector3 playerVelocity;
     private bool groundedPlayer;
-    private float gravityValue = -9.81f;
+    private float ySpeed;
+    private float jumpSpeed = 1f;
+    private float gravityValue = -20.81f;
 
     private float _moveSpeed;
     private float _maxSpeed;
@@ -39,6 +41,20 @@ public class BlobMovementViewModel
 
         GameInput.Instance.OnJump += GameInput_OnJump;
         GameInput.Instance.OnMove += GameInput_OnMove;
+
+
+        var t = Observable.EveryUpdate().Subscribe(_ => {
+            ySpeed += gravityValue * Time.deltaTime;
+            if (characterController.isGrounded)
+            {
+                ySpeed = 0;
+            }
+
+            characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
+            GameObject.FindGameObjectWithTag("Player").transform.position =
+                new Vector3(characterController.transform.position.x,
+                characterController.transform.position.y, -4.45f);
+        });
 
         blobTemp.Subscribe(blobTemp =>
         {
@@ -86,20 +102,30 @@ public class BlobMovementViewModel
 
     private void PlayerJump()
     {
-        groundedPlayer = characterController.isGrounded;
-        if (groundedPlayer && playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0f;
-        }
 
         float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
-        if (groundedPlayer)
-        {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-        }
+        //  if (characterController.isGrounded) //|| characterController.velocity.y == 0)
+        // {
+        ySpeed = Mathf.Sqrt(jumpHeight * -3.0f * gravityValue * jumpSpeed);
+        //}
 
-        playerVelocity.y += gravityValue * Time.deltaTime;
-        characterController.Move(playerVelocity * Time.deltaTime);
+
+        characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
+
+        //groundedPlayer = characterController.isGrounded;
+        //if (groundedPlayer && playerVelocity.y < 0)
+        //{
+        //    playerVelocity.y = 0f;
+        //}
+
+        //float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
+        //if (groundedPlayer)
+        //{
+        //    playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+        //}
+
+        //playerVelocity.y += gravityValue * Time.deltaTime;
+        //characterController.Move(playerVelocity * Time.deltaTime);
     }
 
     private void PlayerMove(Vector2 movement)
