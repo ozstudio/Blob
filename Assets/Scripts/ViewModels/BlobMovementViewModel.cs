@@ -53,7 +53,7 @@ public class BlobMovementViewModel
             characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
             GameObject.FindGameObjectWithTag("Player").transform.position =
                 new Vector3(characterController.transform.position.x,
-                characterController.transform.position.y, -4.45f);
+                characterController.transform.position.y,0);
         });
 
         blobTemp.Subscribe(blobTemp =>

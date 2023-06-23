@@ -28,7 +28,7 @@ public class GameInput : MonoBehaviour
         
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         Vector2 movementVector = GetMovementVectorNormalized();
         if(movementVector != Vector2.zero)
