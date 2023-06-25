@@ -9,11 +9,12 @@ public class BlobView : MonoBehaviour
     public BlobMovementViewModel blobMovementViewModel { get; private set; }
 
     private Vector3 blobStartScale;
+    CharacterController characterController;
 
 
     void Awake()
     {
-        CharacterController characterController = GetComponent<CharacterController>();
+        characterController = GetComponent<CharacterController>();
         blobStartScale = transform.localScale;
         blobTempViewModel = new BlobTempViewModel();
 

@@ -95,10 +95,10 @@ public class BlobTempViewModel
 
     public void СoolingDown(float temp)
     {
-        //Проверка, нужно ли уменьшать температуру, если она больше температуры испарения(50)
+        //Проверка, нужно ли уменьшать температуру, если она больше стартовой температуры(25)
         if (!onHotColdArea)
         {
-            if (temp > GlobalModel.Instance.VaporizationTemp && tempDecreaseFromHighTemp == null)
+            if (temp > GlobalModel.Instance.StartBlobTemp && tempDecreaseFromHighTemp == null)
             {
                 tempDecreaseFromHighTemp = TempDecreaseOnAreaCoroutine();
                 coroutineRunner.RunCoroutine(tempDecreaseFromHighTemp);

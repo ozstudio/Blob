@@ -103,11 +103,14 @@ public class BlobMovementViewModel
     private void PlayerJump()
     {
 
-        float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
-        //  if (characterController.isGrounded) //|| characterController.velocity.y == 0)
-        // {
-        ySpeed = Mathf.Sqrt(jumpHeight * -3.0f * gravityValue * jumpSpeed);
-        //}
+        if (characterController.isGrounded)
+        {
+            float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
+            ySpeed = Mathf.Sqrt(jumpHeight * -3.0f * gravityValue * jumpSpeed);
+        } else
+        {
+            return;
+        }
 
 
         characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
