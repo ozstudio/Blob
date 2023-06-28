@@ -17,7 +17,6 @@ public class IronSourceEvents : MonoBehaviour
 #if UNITY_ANDROID
     #pragma warning disable CS0067
     public static event Action onSdkInitializationCompletedEvent;
-
     public static event Action<IronSourceError> onRewardedVideoAdShowFailedEvent;
     public static event Action onRewardedVideoAdOpenedEvent;
     public static event Action onRewardedVideoAdClosedEvent;
@@ -26,10 +25,8 @@ public class IronSourceEvents : MonoBehaviour
     public static event Action<IronSourcePlacement> onRewardedVideoAdRewardedEvent;
     public static event Action<IronSourcePlacement> onRewardedVideoAdClickedEvent;
     public static event Action<bool> onRewardedVideoAvailabilityChangedEvent;
-
     public static event Action<IronSourceError> onRewardedVideoAdLoadFailedEvent;
     public static event Action onRewardedVideoAdReadyEvent;
-
     public static event Action<string> onRewardedVideoAdOpenedDemandOnlyEvent;
     public static event Action<string> onRewardedVideoAdClosedDemandOnlyEvent;
     public static event Action<string> onRewardedVideoAdLoadedDemandOnlyEvent;
@@ -37,7 +34,6 @@ public class IronSourceEvents : MonoBehaviour
     public static event Action<string, IronSourceError> onRewardedVideoAdShowFailedDemandOnlyEvent;
     public static event Action<string> onRewardedVideoAdClickedDemandOnlyEvent;
     public static event Action<string, IronSourceError> onRewardedVideoAdLoadFailedDemandOnlyEvent;
-
     public static event Action onInterstitialAdReadyEvent;
     public static event Action<IronSourceError> onInterstitialAdLoadFailedEvent;
     public static event Action onInterstitialAdOpenedEvent;
@@ -45,21 +41,18 @@ public class IronSourceEvents : MonoBehaviour
     public static event Action onInterstitialAdShowSucceededEvent;
     public static event Action<IronSourceError> onInterstitialAdShowFailedEvent;
     public static event Action onInterstitialAdClickedEvent;
-
     public static event Action<string> onInterstitialAdReadyDemandOnlyEvent;
     public static event Action<string> onInterstitialAdOpenedDemandOnlyEvent;
     public static event Action<string> onInterstitialAdClosedDemandOnlyEvent;
     public static event Action<string, IronSourceError> onInterstitialAdLoadFailedDemandOnlyEvent;
     public static event Action<string> onInterstitialAdClickedDemandOnlyEvent;
     public static event Action<string, IronSourceError> onInterstitialAdShowFailedDemandOnlyEvent;
-
     public static event Action<bool> onOfferwallAvailableEvent;
     public static event Action onOfferwallOpenedEvent;
     public static event Action<Dictionary<string, object>> onOfferwallAdCreditedEvent;
     public static event Action<IronSourceError> onGetOfferwallCreditsFailedEvent;
     public static event Action onOfferwallClosedEvent;
     public static event Action<IronSourceError> onOfferwallShowFailedEvent;
-
     public static event Action onBannerAdLoadedEvent;
     public static event Action onBannerAdLeftApplicationEvent;
     public static event Action onBannerAdScreenDismissedEvent;
@@ -77,10 +70,11 @@ public class IronSourceEvents : MonoBehaviour
     private const string ERROR_DESCRIPTION = "error_description";
     private const string INSTANCE_ID_KEY = "instanceId";
     private const string PLACEMENT_KEY = "placement";
-    #pragma warning disable CS0067
+
+#pragma warning disable CS0067
     public static event Action<IronSourceImpressionData> onImpressionDataReadyEvent;
 
-#if UNITY_ANDROID
+#if UNITY_ANDROID 
     private IUnityInitialization initializationAndroid;
     private IUnityRewardedVideo rewardedVideoAndroid;
     private IUnityRewardedVideoManual rewardedVideoAndroidManual;
@@ -720,7 +714,6 @@ public class IronSourceEvents : MonoBehaviour
     // ******************************* Rewarded Video Events *******************************
     private static event Action<IronSourceError> _onRewardedVideoAdShowFailedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action<IronSourceError> onRewardedVideoAdShowFailedEvent
     {
         add
@@ -751,7 +744,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onRewardedVideoAdOpenedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action onRewardedVideoAdOpenedEvent
     {
         add
@@ -781,7 +773,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onRewardedVideoAdClosedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action onRewardedVideoAdClosedEvent
     {
         add
@@ -811,7 +802,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onRewardedVideoAdStartedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action onRewardedVideoAdStartedEvent
     {
         add
@@ -841,7 +831,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onRewardedVideoAdEndedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action onRewardedVideoAdEndedEvent
     {
         add
@@ -871,7 +860,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action<IronSourcePlacement> _onRewardedVideoAdRewardedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action<IronSourcePlacement> onRewardedVideoAdRewardedEvent
     {
         add
@@ -902,7 +890,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action<IronSourcePlacement> _onRewardedVideoAdClickedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action<IronSourcePlacement> onRewardedVideoAdClickedEvent
     {
         add
@@ -933,7 +920,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action<bool> _onRewardedVideoAvailabilityChangedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action<bool> onRewardedVideoAvailabilityChangedEvent
     {
         add
@@ -1201,7 +1187,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onInterstitialAdReadyEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceInterstitialEvents listener instead.", false)]
     public static event Action onInterstitialAdReadyEvent
     {
         add
@@ -1229,7 +1214,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action<IronSourceError> _onInterstitialAdLoadFailedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceInterstitialEvents listener instead.", false)]
     public static event Action<IronSourceError> onInterstitialAdLoadFailedEvent
     {
         add
@@ -1260,7 +1244,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onInterstitialAdOpenedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceInterstitialEvents listener instead.", false)]
     public static event Action onInterstitialAdOpenedEvent
     {
         add
@@ -1290,7 +1273,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onInterstitialAdClosedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceInterstitialEvents listener instead.", false)]
     public static event Action onInterstitialAdClosedEvent
     {
         add
@@ -1320,7 +1302,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onInterstitialAdShowSucceededEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceInterstitialEvents listener instead.", false)]
     public static event Action onInterstitialAdShowSucceededEvent
     {
         add
@@ -1350,7 +1331,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action<IronSourceError> _onInterstitialAdShowFailedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceInterstitialEvents listener instead.", false)]
     public static event Action<IronSourceError> onInterstitialAdShowFailedEvent
     {
         add
@@ -1381,7 +1361,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onInterstitialAdClickedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceInterstitialEvents listener instead.", false)]
     public static event Action onInterstitialAdClickedEvent
     {
         add
@@ -1769,7 +1748,6 @@ public class IronSourceEvents : MonoBehaviour
     // ******************************* Banner Events *******************************    
     private static event Action _onBannerAdLoadedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceBannerEvents listener instead.", false)]
     public static event Action onBannerAdLoadedEvent
     {
         add
@@ -1797,7 +1775,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action<IronSourceError> _onBannerAdLoadFailedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceBannerEvents listener instead.", false)]
     public static event Action<IronSourceError> onBannerAdLoadFailedEvent
     {
         add
@@ -1829,7 +1806,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onBannerAdClickedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceBannerEvents listener instead.", false)]
     public static event Action onBannerAdClickedEvent
     {
         add
@@ -1857,7 +1833,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onBannerAdScreenPresentedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceBannerEvents listener instead.", false)]
     public static event Action onBannerAdScreenPresentedEvent
     {
         add
@@ -1885,7 +1860,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onBannerAdScreenDismissedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceBannerEvents listener instead.", false)]
     public static event Action onBannerAdScreenDismissedEvent
     {
         add
@@ -1913,7 +1887,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onBannerAdLeftApplicationEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceBannerEvents listener instead.", false)]
     public static event Action onBannerAdLeftApplicationEvent
     {
         add
@@ -1975,7 +1948,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action<IronSourceError> _onRewardedVideoAdLoadFailedEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action<IronSourceError> onRewardedVideoAdLoadFailedEvent
     {
         add
@@ -2006,7 +1978,6 @@ public class IronSourceEvents : MonoBehaviour
 
     private static event Action _onRewardedVideoAdReadyEvent;
 
-    [Obsolete("This API has been deprecated as of SDK 7.3.0. Please use the alternate API in IronSourceRewardedVideoEvents listener instead.", false)]
     public static event Action onRewardedVideoAdReadyEvent
     {
         add
