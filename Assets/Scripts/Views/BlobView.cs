@@ -1,3 +1,4 @@
+using System;
 using UniRx;
 using UnityEngine;
 
@@ -5,15 +6,38 @@ public class BlobView : MonoBehaviour
 {
     public BlobTempViewModel blobTempViewModel { get; private set; }
     public BlobVolumeViewModel blobVolumeViewModel { get; private set; }
+    public BlobMovementViewModel blobMovementViewModel { get; private set; }
+
     private Vector3 blobStartScale;
+    CharacterController characterController;
+
 
     void Awake()
     {
+        characterController = GetComponent<CharacterController>();
         blobStartScale = transform.localScale;
         blobTempViewModel = new BlobTempViewModel();
+
+        blobMovementViewModel = new BlobMovementViewModel(blobTempViewModel.blobTemp, characterController);
+
+
         blobVolumeViewModel = new BlobVolumeViewModel(blobTempViewModel.blobTemp);
+
+
         blobVolumeViewModel.blobSize.Subscribe(_ => ChangeBlobSize(_));
+        blobMovementViewModel.blobMovement.Subscribe(_ => BlobMovement(_));
+        
+
+
+
     }
+
+    private void BlobMovement(Vector3 _)
+    {
+        gameObject.transform.forward = _;
+    }
+
+   
 
     private void ChangeBlobSize(float blobSize)
     {
