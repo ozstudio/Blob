@@ -7,7 +7,7 @@ public class IronSource : IronSourceIAgent
 {
 	private IronSourceIAgent _platformAgent;
 	private static IronSource _instance;
-	public static string UNITY_PLUGIN_VERSION = "7.3.0-r";
+	public static string UNITY_PLUGIN_VERSION = "7.2.5.2-r";
 	private static bool isUnsupportedPlatform;
 
 	private IronSource()
@@ -70,6 +70,12 @@ public class IronSource : IronSourceIAgent
 	public void onApplicationPause(bool pause)
 	{
 		_platformAgent.onApplicationPause(pause);
+	}
+
+	[Obsolete("This method has been deprecated and won’t be included in ironSource SDK versions 7.3.0 and above", false)]
+	public void setMediationSegment(string segment)
+	{
+		_platformAgent.setMediationSegment(segment);
 	}
 
 	public string getAdvertiserId()
@@ -150,6 +156,11 @@ public class IronSource : IronSourceIAgent
 	}
 
 	//******************* RewardedVideo API *******************//
+	[Obsolete("This method has been deprecated and won’t be included in ironSource SDK versions 7.3.0 and above. Please use loadRewardedVideo() instead", false)]
+	public void loadManualRewardedVideo()
+	{
+		_platformAgent.loadRewardedVideo();
+	}
 
 	public void loadRewardedVideo()
 	{
@@ -336,13 +347,6 @@ public class IronSource : IronSourceIAgent
 	public void setAdRevenueData(string dataSource, Dictionary<string, string> impressionData)
 	{
 		_platformAgent.setAdRevenueData(dataSource, impressionData);
-	}
-
-	//******************* TestSuite API *******************//
-
-	public void launchTestSuite()
-	{
-		_platformAgent.launchTestSuite();
 	}
 
 	#endregion
