@@ -16,6 +16,7 @@ public class BlobView : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         blobStartScale = transform.localScale;
+
         blobTempViewModel = new BlobTempViewModel();
 
         blobMovementViewModel = new BlobMovementViewModel(blobTempViewModel.blobTemp, characterController);
@@ -34,7 +35,9 @@ public class BlobView : MonoBehaviour
 
     private void BlobMovement(Vector3 _)
     {
-        gameObject.transform.forward = _;
+        
+            gameObject.transform.forward = _;
+        
     }
 
    

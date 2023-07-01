@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
@@ -28,8 +29,10 @@ public class BlobMovementViewModel
     public BlobMovementViewModel(ReactiveProperty <float> blobTemp, CharacterController characterController)
     {
         blobMovement = new ReactiveProperty<Vector3>();
+        
+        
         this.characterController = characterController;
-
+       
         _maxJumpHeight = GlobalModel.Instance.MaxJumpHeight;
         _speedIncreaseFactor = GlobalModel.Instance.SpeedIncreaseFactor;
         _maxSpeed = GlobalModel.Instance.StartBlobSpeed * 2;
@@ -42,16 +45,30 @@ public class BlobMovementViewModel
         GameInput.Instance.OnJump += GameInput_OnJump;
         GameInput.Instance.OnMove += GameInput_OnMove;
 
+        
 
         var t = Observable.EveryUpdate().Subscribe(_ => {
-            ySpeed += gravityValue * Time.deltaTime;
+
             if (characterController.isGrounded)
             {
-                ySpeed = 0;
+                ySpeed = -1f;
             }
 
+           // RaycastHit hit;
+            if (Physics.Raycast(characterController.transform.position,
+                characterController.transform
+                .TransformDirection(Vector3.up),characterController.transform.localScale.x))
+            {
+                
+                Debug.DrawRay(characterController.transform.position,
+                    characterController.transform.TransformDirection(Vector3.up),Color.red);
+
+                ySpeed = gravityValue * Time.deltaTime * 10;
+
+            }
+            ySpeed += gravityValue * Time.deltaTime;
             characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
-            GameObject.FindGameObjectWithTag("Player").transform.position =
+            characterController.transform.position =
                 new Vector3(characterController.transform.position.x,
                 characterController.transform.position.y,0);
         });
@@ -76,7 +93,7 @@ public class BlobMovementViewModel
 
     private void GameInput_OnMove(object sender, GameInput.MovementVectorEventArgs e)
     {
-        PlayerMove(e.movementVector);
+            PlayerMove(e.movementVector);
     }
 
     private void GameInput_OnJump(object sender, EventArgs e)
@@ -86,6 +103,7 @@ public class BlobMovementViewModel
 
     private float BlobSpeed()
     {
+      //  _moveSpeed  = _moveSpeed * characterController.transform.localScale.x;
         if (_moveSpeed >= _maxSpeed)
         {
             _moveSpeed = _maxSpeed;
@@ -133,6 +151,7 @@ public class BlobMovementViewModel
 
     private void PlayerMove(Vector2 movement)
     {
+        
         groundedPlayer = characterController.isGrounded;
         if (groundedPlayer && playerVelocity.y < 0)
         {
@@ -141,6 +160,7 @@ public class BlobMovementViewModel
 
         Vector3 move = new Vector3(movement.x, playerVelocity.y, 0);
         characterController.Move(move * Time.deltaTime * BlobSpeed());
+        characterController.stepOffset = BlobSpeed() / 200;
 
         if (move != Vector3.zero)
         {
