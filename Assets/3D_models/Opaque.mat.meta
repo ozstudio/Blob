@@ -1,14 +1,6 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Plugins/Android/gradleTemplate.properties.meta
-guid: c812a300fb3336341a99524489bfb192
-DefaultImporter:
-|||||||| 74a7061:Assets/IronSource/Editor/IronSource_IntegrationManager.unitypackage.meta
-guid: 46debdaa44092604f874e0d7ca050e0e
-DefaultImporter:
-========
 guid: b8b80da82fd1e8c42ba3c3c8a2c1773c
 NativeFormatImporter:
->>>>>>>> main:Assets/3D_models/Opaque.mat.meta
   externalObjects: {}
   mainObjectFileID: 2100000
   userData: 
