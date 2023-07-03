@@ -7,6 +7,8 @@ TagManager:
   - GameInputJoystick
   - CheckGroundPoint
   - JumpBtn
+  - RayCastTop
+  - VerticalWall
   layers:
   - Default
   - TransparentFX

@@ -21,4 +21,6 @@ public class HotAreaView : MonoBehaviour
     {
         hotAreaViewModel?.OnTriggerExit(other);
     }
+
+
 }
