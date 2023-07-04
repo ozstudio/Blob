@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelPlayAds : MonoBehaviour
 {
-    // Start is called before the first frame update
+   // Start is called before the first frame update
     void Start()
     {
         IronSource.Agent.init("1aab6229d", IronSourceAdUnits.INTERSTITIAL, IronSourceAdUnits.BANNER);
@@ -66,7 +66,7 @@ public class LevelPlayAds : MonoBehaviour
         LoadInterstitial();
         if (IronSource.Agent.isInterstitialReady())
         {
-            IronSource.Agent.showInterstitial();            
+            IronSource.Agent.showInterstitial();
         }
         else
         {
