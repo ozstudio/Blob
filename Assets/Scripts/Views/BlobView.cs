@@ -12,15 +12,14 @@ public class BlobView : MonoBehaviour
     CharacterController characterController;
 
 
-    void Awake()
+    void Start()
     {
         characterController = GetComponent<CharacterController>();
         blobStartScale = transform.localScale;
 
         blobTempViewModel = new BlobTempViewModel();
 
-        blobMovementViewModel = new BlobMovementViewModel(blobTempViewModel.blobTemp, characterController);
-        
+        blobMovementViewModel = new BlobMovementViewModel(blobTempViewModel.blobTemp, characterController);        
 
         blobVolumeViewModel = new BlobVolumeViewModel(blobTempViewModel.blobTemp);
 
@@ -33,8 +32,8 @@ public class BlobView : MonoBehaviour
 
 
     }
-   
 
+    
     //private void BlobMovement(Vector3 _)
     //{
     //       //gameObject.transform.forward =_;
@@ -42,7 +41,7 @@ public class BlobView : MonoBehaviour
 
     //}
 
-   
+
 
     private void ChangeBlobSize(float blobSize)
     {

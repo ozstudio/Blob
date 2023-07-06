@@ -7,11 +7,6 @@ using UnityEngine.UI;
 
 public class BlobMovementViewModel 
 {
-   
-
-
-
-
     public ReactiveProperty<Vector3> blobMovement;
     public ReactiveProperty<bool> isWall;
 
@@ -126,7 +121,7 @@ public class BlobMovementViewModel
    
     private void GameInput_OnMove(object sender, GameInput.MovementVectorEventArgs e)
     {
-            PlayerMove(e.movementVector);
+        PlayerMove(e.movementVector);
     }
 
     private void GameInput_OnJump(object sender, EventArgs e)

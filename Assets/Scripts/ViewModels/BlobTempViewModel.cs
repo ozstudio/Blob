@@ -18,6 +18,8 @@ public class BlobTempViewModel
     public BlobTempViewModel()
     {
         coroutineRunner = CoroutineRunner.Instance;
+        GlobalModel model = GlobalModel.Instance;
+        float startBlobTemp = GlobalModel.Instance.StartBlobTemp;
         blobTemp = new ReactiveProperty<float>(GlobalModel.Instance.StartBlobTemp);
         blobTemp.Subscribe(_ => OnBlobTempChange());
     }
