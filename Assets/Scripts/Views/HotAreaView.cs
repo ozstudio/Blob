@@ -7,7 +7,7 @@ public class HotAreaView : MonoBehaviour
 {
     private HotAreaViewModel hotAreaViewModel;
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         hotAreaViewModel = new HotAreaViewModel();
     }

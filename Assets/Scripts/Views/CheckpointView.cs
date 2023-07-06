@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaterView : MonoBehaviour
+public class CheckpointView : MonoBehaviour
 {
-    private WaterViewModel waterViewModel;
+    private CheckpointViewModel checkpointViewModel;
     // Start is called before the first frame update
     void Start()
     {
-        waterViewModel = new WaterViewModel();
+        checkpointViewModel = new CheckpointViewModel();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        waterViewModel?.OnTriggerEnter(other);
+        checkpointViewModel?.OnTriggerEnter(other, this);
     }
 }
