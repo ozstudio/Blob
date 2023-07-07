@@ -23,6 +23,8 @@ public class GlobalModel : MonoBehaviour
     [SerializeField] private float boilingTemp;
     //Стартовый объем капли
     [SerializeField] private float startBlobVolume;
+    //Стартовый размер капли
+    [SerializeField] private float startBlobSize;
 
     [SerializeField] private float speedIncreaseFactor;
     [SerializeField] private float maxJumpHeight;
@@ -47,6 +49,11 @@ public class GlobalModel : MonoBehaviour
     //Восполняемый объем капли от воды
     [SerializeField] private float blobVolumeFilled;
 
+    [Header("----------------------")]
+
+    //Кол-во жизней на старте
+    [SerializeField] private int livesCount;
+
     public float ModificationTime { get { return modificationTime; } }
     public float StartBlobTemp { get { return startBlobTemp; } }
     public float BlobHeatingSpeed { get { return blobHeatingSpeed; } }
@@ -58,6 +65,7 @@ public class GlobalModel : MonoBehaviour
     public float MaxJumpHeight { get { return maxJumpHeight; } }
     public float BoilingTemp { get { return boilingTemp; } }
     public float StartBlobVolume { get { return startBlobVolume; } }
+    public float StartBlobSize{ get { return startBlobSize; } }
     public float StartBlobSpeed { get { return startBlobSpeed; } }
     public float MaxBlobSpeed { get { return maxBlobSpeed; } }
     public float MinBlobSpeed { get { return minBlobSpeed; } }
@@ -67,6 +75,9 @@ public class GlobalModel : MonoBehaviour
     public float MaxVolumeForBlobSize { get { return maxVolumeForBlobSize; } }
     public float MinVolumeForBlobSize { get { return minVolumeForBlobSize; } }
     public float BlobVolumeFilled { get { return blobVolumeFilled; } }
+
+
+    public int LivesCount { get { return livesCount; } }
 
     public static GlobalModel Instance;
 

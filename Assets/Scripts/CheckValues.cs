@@ -12,6 +12,7 @@ public class CheckValues : MonoBehaviour
 
     private void Start()
     {
+        ReactiveProperty<float> blolbTemp = blob.blobTempViewModel.blobTemp;
         blob.blobTempViewModel.blobTemp.Subscribe(_ =>
         {
             tempText.text = "Temp: " + _.ToString();

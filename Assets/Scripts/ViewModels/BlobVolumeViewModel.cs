@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class BlobVolumeViewModel
 {
-    public ReactiveProperty<float> blobVolume { get; private set; }
+    public ReactiveProperty<float> blobVolume { get; private set; } = new ReactiveProperty<float>();
 
-    public ReactiveProperty<float> blobSize { get; private set; }
+    public ReactiveProperty<float> blobSize { get; private set; } = new ReactiveProperty<float>();
 
     private IEnumerator volumeDecreaseFromHighTemp;
 
@@ -17,10 +17,16 @@ public class BlobVolumeViewModel
     public BlobVolumeViewModel(ReactiveProperty<float> blobTemp)
     {
         coroutineRunner = CoroutineRunner.Instance;
-        blobSize = new ReactiveProperty<float>(1f);
-        blobVolume = new ReactiveProperty<float>(GlobalModel.Instance.StartBlobVolume);
+        blobSize.Value = GlobalModel.Instance.StartBlobSize;
+        blobVolume.Value = GlobalModel.Instance.StartBlobVolume;
         blobVolume.Subscribe(_ => CheckSizeChangeFromVolume(_));
+        CheckpointManager.Instance.OnGoToLastCheckpoint += CheckpointManager_OnGoToLastCheckpoint;
         blobTemp.Subscribe(_ => CheckVaporizeTemp(_));
+    }
+
+    private void CheckpointManager_OnGoToLastCheckpoint(object sender, System.EventArgs e)
+    {
+        blobVolume.Value = CheckpointManager.Instance.BlobVolumeCheckpoint;
     }
 
     public void WaterTouchActions()
@@ -33,7 +39,7 @@ public class BlobVolumeViewModel
     private void CheckVaporizeTemp(float blobTemp)
     {
         //Функция вызывается каждый раз при изменении температуры. Проверяет, нужно ли уменьшать объем капли сейчас.
-        if(blobTemp >= GlobalModel.Instance.VaporizationTemp && volumeDecreaseFromHighTemp == null && blobVolume.Value > 0)
+        if(blobTemp >= GlobalModel.Instance.VaporizationTemp && blobTemp < GlobalModel.Instance.BoilingTemp && volumeDecreaseFromHighTemp == null && blobVolume.Value > 0)
         {
             volumeDecreaseFromHighTemp = VolumeDecreaseCoroutine();
             coroutineRunner.RunCoroutine(volumeDecreaseFromHighTemp);
@@ -51,12 +57,13 @@ public class BlobVolumeViewModel
         //Проверка, что объем не стал меньше 0. Вызывается везде, где уменьшается температура
         if(blobVolume.Value <= 0)
         {
-            blobVolume.Value = 0;//Конец игры
+            //blobVolume.Value = GlobalModel.Instance.StartBlobVolume;//Конец игры
             if(volumeDecreaseFromHighTemp != null)
             {
                 coroutineRunner.StopOneCoroutine(volumeDecreaseFromHighTemp);
                 volumeDecreaseFromHighTemp = null;
             }
+            GameManager.Instance.TryGameOver();
         }
     }
 
@@ -91,7 +98,6 @@ public class BlobVolumeViewModel
         //Корутина для уменьшения объема капли
         while (true)
         {
-            //Debug.Log("blobVolume: " + blobVolume.Value.ToString());
             blobVolume.Value -= GlobalModel.Instance.VaporizationVolumeSpeed;
             yield return new WaitForSeconds(GlobalModel.Instance.ModificationTime);
         }

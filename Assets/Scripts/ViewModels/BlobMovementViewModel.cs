@@ -115,10 +115,15 @@ public class BlobMovementViewModel
 
             }
 
-        });    
+        });
+        CheckpointManager.Instance.OnGoToLastCheckpoint += CheckpointManagerOnGoToLastCheckpoint;
     }
 
-   
+    private void CheckpointManagerOnGoToLastCheckpoint(object sender, EventArgs e)
+    {
+        _moveSpeed = CheckpointManager.Instance.BlobMoveSpeedCheckpoint;
+    }
+
     private void GameInput_OnMove(object sender, GameInput.MovementVectorEventArgs e)
     {
         PlayerMove(e.movementVector);

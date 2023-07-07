@@ -25,6 +25,7 @@ public class BlobView : MonoBehaviour
 
 
         blobVolumeViewModel.blobSize.Subscribe(_ => ChangeBlobSize(_));
+        ChangeBlobSize(blobVolumeViewModel.blobSize.Value);
        // blobMovementViewModel.blobMovement.Subscribe(_ => BlobMovement(_));
         
         

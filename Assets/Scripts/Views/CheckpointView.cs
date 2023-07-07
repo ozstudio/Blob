@@ -10,7 +10,7 @@ public class CheckpointView : MonoBehaviour
     {
         checkpointViewModel = new CheckpointViewModel();
     }
-
+         
     private void OnTriggerEnter(Collider other)
     {
         checkpointViewModel?.OnTriggerEnter(other, this);

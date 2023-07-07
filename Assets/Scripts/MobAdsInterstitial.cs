@@ -11,9 +11,9 @@ public class MobAdsInterstitial : MonoBehaviour
 #if UNITY_ANDROID
     private const string interstitalUnitId = "ca-app-pub-3940256099942544/6300978111";
 #elif UNITY_IPHONE
-    private const string bannerUnitId = "";
+    private const string interstitalUnitId = "";
 #else
-    private const string bannerUnitId = "unexpected platform";
+    private const string interstitalUnitId = "unexpected platform";
 #endif
 
     private void Start()
