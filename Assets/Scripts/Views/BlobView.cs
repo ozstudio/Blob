@@ -26,7 +26,7 @@ public class BlobView : MonoBehaviour
 
         blobVolumeViewModel.blobSize.Subscribe(_ => ChangeBlobSize(_));
         ChangeBlobSize(blobVolumeViewModel.blobSize.Value);
-       // blobMovementViewModel.blobMovement.Subscribe(_ => BlobMovement(_));
+        blobMovementViewModel.blobMovement.Subscribe(_ => BlobMovement(_));
         
         
 
@@ -34,13 +34,11 @@ public class BlobView : MonoBehaviour
 
     }
 
-    
-    //private void BlobMovement(Vector3 _)
-    //{
-    //       //gameObject.transform.forward =_;
-    //     // characterController.Move(_ * Time.deltaTime);
 
-    //}
+    private void BlobMovement(Vector3 _)
+    {
+        characterController.Move(_);
+    }
 
 
 

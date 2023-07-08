@@ -1,9 +1,6 @@
 using System;
-using System.Runtime.CompilerServices;
 using UniRx;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.UI;
 
 public class BlobMovementViewModel 
 {
@@ -16,6 +13,7 @@ public class BlobMovementViewModel
     private float ySpeed;
     private float jumpSpeed = 1f;
     private float gravityValue = -20.81f;
+    public bool canJump = true;
 
     private float _moveSpeed;
     private float _maxSpeed;
@@ -62,10 +60,10 @@ public class BlobMovementViewModel
             RaycastHit hitSide;
             if (Physics.Raycast(characterController.transform.position,
               characterController.transform
-              .TransformDirection(Vector3.forward),out hitSide, characterController.transform.localScale.x/2 - 0.1f)
+              .TransformDirection(Vector3.forward), out hitSide, characterController.transform.localScale.x / 2 - 0.1f)
             )
             {
-                if(hitSide.transform.tag == "VerticalWall")
+                if (hitSide.transform.tag == "VerticalWall")
                 {
                     isTouchingWall = true;
                 }
@@ -74,14 +72,23 @@ public class BlobMovementViewModel
             {
                 isTouchingWall = false;
             }
-            
+
+            //if ((characterController.collisionFlags & CollisionFlags.Sides) != 0)
+            //{
+            //    isTouchingWall = true;
+            //    Debug.Log(CollisionFlags.CollidedSides);
+            //}
+            //if (characterController.collisionFlags != CollisionFlags.None)
+            //{
+            //    Debug.Log("untouch");
+            //}
+
 
             if ((characterController.collisionFlags & CollisionFlags.Above) != 0)
             {
-                ySpeed = gravityValue * Time.deltaTime * 10;
+                ySpeed = gravityValue * Time.deltaTime * 5;
             }
-            
-
+           
 
             if (isTouchingWall)
             {
@@ -131,7 +138,11 @@ public class BlobMovementViewModel
 
     private void GameInput_OnJump(object sender, EventArgs e)
     {
-        PlayerJump();
+        if (canJump)
+        {
+            PlayerJump();
+        }
+
     }
 
     private float BlobSpeed()
@@ -153,19 +164,29 @@ public class BlobMovementViewModel
 
     private void PlayerJump()
     {
+        if (isTouchingWall)
+        {
+            float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
+            ySpeed = Mathf.Sqrt(jumpHeight * -3.0f * gravityValue * jumpSpeed);
+            if(characterController.transform.rotation.y < 0)
+            {
+                characterController.Move(new Vector3(20f, ySpeed, 0) * Time.deltaTime);
+            }
+            if(characterController.transform.rotation.y > 0)
+            {
+                characterController.Move(new Vector3(-20f, ySpeed, 0) * Time.deltaTime);
+            }
+            isTouchingWall = false;
 
+        }
         if (characterController.isGrounded)
         {
             float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
             ySpeed = Mathf.Sqrt(jumpHeight * -3.0f * gravityValue * jumpSpeed);
-        } else
-        {
-            return;
+            characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
+
         }
-
-
-        characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
-
+       
     }
 
     private void PlayerMove(Vector2 movement)
@@ -182,27 +203,44 @@ public class BlobMovementViewModel
 
         if (isTouchingWall)
         {
-            if (movement.x < 0 || movement.x >0 )
+            if (characterController.transform.rotation.y > 0)
             {
-                move = new Vector3(0, 1, 0);
+                if (movement.x < 0)
+                {
+                    move = new Vector3(0, -1, 0);
+                }
+                if (movement.x > 0)
+                {
+                    move = new Vector3(0, 1, 0);
+                }
+
             }
             else
-                move = new Vector3(0, -1, 0);
+            {
+                if (movement.x < 0)
+                {
+                    move = new Vector3(0, 1, 0);
+                }
+                if (movement.x > 0)
+                {
+                    move = new Vector3(0, -1, 0);
+                }
+
+            }
+            
 
         }
         else
         {
-            move = new Vector3(movement.x,0, 0);
+            move = new Vector3(movement.x, 0, 0);
+            characterController.transform.rotation = Quaternion.LookRotation(new Vector2(movement.x, 0));
         }
-
-        characterController.transform.rotation = Quaternion.LookRotation(new Vector2(movement.x,0));
-        characterController.Move(move * Time.deltaTime * BlobSpeed());
         characterController.stepOffset = BlobSpeed() / 200;
 
-        //if (move != Vector3.zero)
-        //{
-        //    blobMovement.Value = move;
-            
-        //}
+        if (move != Vector3.zero)
+        {
+            blobMovement.Value = move * BlobSpeed() * Time.deltaTime;
+
+        }
     }
 }

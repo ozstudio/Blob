@@ -10,39 +10,47 @@ public class DryAreaView : MonoBehaviour
     private float speed = 0.05f;
     [SerializeField]
     int chMoveDir;
+    private BlobView _player;
 
 
-   
+    private void Start()
+    {
+        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<BlobView>();
+        
+    }
 
 
     private void Update()
     {
-      //  print(gameObject.transform.localRotation.eulerAngles);
+        //   print(180 - gameObject.transform.eulerAngles.z);
 
         if (isMustSlide)
         {
             Slide();
         }
-       
+
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.name == "Player")
         {
             isMustSlide = true;
+            _player.blobMovementViewModel.canJump = false;
            _playerColl = other.GetComponent<CharacterController>();
-          //  print("pl");
+          
         }
     }
+   
     private void OnTriggerExit(Collider other)
     {
         isMustSlide = false;
+        _player.blobMovementViewModel.canJump = true;
     }
-
+    
     void Slide()
     {
         _playerColl.Move(new Vector3(speed * Time.deltaTime * chMoveDir, 0, 0));
-       // print("sliding");
+       
     }
 
 
