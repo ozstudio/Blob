@@ -52,17 +52,25 @@ public class BlobMovementViewModel
 
         var t = Observable.EveryUpdate().Subscribe(_ => {
 
+
+            //Add more gravity to push characterController to the ground
+            //Zero gravity doesn't work well.
             if (characterController.isGrounded)
             {
                 ySpeed = -1f;
             };
 
+            //Send raycast to direction which Player is facing from middle 
             RaycastHit hitSide;
             if (Physics.Raycast(characterController.transform.position,
               characterController.transform
-              .TransformDirection(Vector3.forward), out hitSide, characterController.transform.localScale.x / 2 - 0.1f)
+              .TransformDirection(Vector3.forward), out hitSide,
+
+              //calculating raycast length.with this you can play to adjust how deep player sticks to the wall
+              characterController.transform.localScale.x / 2 - 0.1f)
             )
             {
+                //player can climb up/down verticaly only on walls with tag "VerticalWall"
                 if (hitSide.transform.tag == "VerticalWall")
                 {
                     isTouchingWall = true;
@@ -73,23 +81,18 @@ public class BlobMovementViewModel
                 isTouchingWall = false;
             }
 
-            //if ((characterController.collisionFlags & CollisionFlags.Sides) != 0)
-            //{
-            //    isTouchingWall = true;
-            //    Debug.Log(CollisionFlags.CollidedSides);
-            //}
-            //if (characterController.collisionFlags != CollisionFlags.None)
-            //{
-            //    Debug.Log("untouch");
-            //}
 
 
+            //check if characterController touch the ceiling
             if ((characterController.collisionFlags & CollisionFlags.Above) != 0)
             {
+                // if characterController touching ceiling change characterController.move Y speed
+                //you can play with number to increase or decrease gravity speed when touching ceilng
                 ySpeed = gravityValue * Time.deltaTime * 5;
             }
-           
 
+
+            //stop characterController.move Y speed
             if (isTouchingWall)
             {
                 ySpeed = 0;
@@ -102,11 +105,16 @@ public class BlobMovementViewModel
             }
             
             characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
+
+
+            //Prevent characterController from moving on Z axis.
             characterController.transform.position =
                 new Vector3(characterController.transform.position.x,
                 characterController.transform.position.y,0);
         });
 
+
+        //set move speed according to blob temp
         blobTemp.Subscribe(blobTemp =>
         {
             _currentTemp = blobTemp;
@@ -145,6 +153,8 @@ public class BlobMovementViewModel
 
     }
 
+
+    //!!! here check again!!! Think it is not working properly
     private float BlobSpeed()
     {
      
@@ -162,8 +172,10 @@ public class BlobMovementViewModel
 
     
 
+
     private void PlayerJump()
     {
+        //Jump when characterController on "VerticalWall"(tag)
         if (isTouchingWall)
         {
             float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
@@ -176,9 +188,12 @@ public class BlobMovementViewModel
             {
                 characterController.Move(new Vector3(-20f, ySpeed, 0) * Time.deltaTime);
             }
+
             isTouchingWall = false;
 
         }
+
+        //Jump height according to the blob size.
         if (characterController.isGrounded)
         {
             float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
@@ -198,9 +213,11 @@ public class BlobMovementViewModel
             playerVelocity.y = 0f;
         }
 
-        
-        
 
+
+
+        //move player up/down on "VerticalWall"(tag)
+        //check from which side and to which direction player facing
         if (isTouchingWall)
         {
             if (characterController.transform.rotation.y > 0)
@@ -233,6 +250,8 @@ public class BlobMovementViewModel
         else
         {
             move = new Vector3(movement.x, 0, 0);
+
+            //rotate player to stick direction
             characterController.transform.rotation = Quaternion.LookRotation(new Vector2(movement.x, 0));
         }
         characterController.stepOffset = BlobSpeed() / 200;
