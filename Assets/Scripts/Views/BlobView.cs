@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class BlobView : MonoBehaviour
 {
-    public BlobTempViewModel blobTempViewModel { get; private set; }
-    public BlobVolumeViewModel blobVolumeViewModel { get; private set; }
-    public BlobMovementViewModel blobMovementViewModel { get; private set; }
+    public BlobTempViewModel BlobTempViewModel { get; private set; }
+    public BlobVolumeViewModel BlobVolumeViewModel { get; private set; }
+    //public BlobMovementViewModel1 blobMovementViewModel { get; private set; }
+    public BlobMovementViewModel BlobMovementViewModel { get; private set; }
 
     private Vector3 blobStartScale;
     CharacterController characterController;
@@ -17,30 +18,25 @@ public class BlobView : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         blobStartScale = transform.localScale;
 
-        blobTempViewModel = new BlobTempViewModel();
+        BlobTempViewModel = new BlobTempViewModel();
+      
 
-        blobMovementViewModel = new BlobMovementViewModel(blobTempViewModel.blobTemp, characterController);        
+        BlobVolumeViewModel = new BlobVolumeViewModel(BlobTempViewModel.blobTemp);
 
-        blobVolumeViewModel = new BlobVolumeViewModel(blobTempViewModel.blobTemp);
+        //blobMovementViewModel = new BlobMovementViewModel(blobTempViewModel.blobTemp, characterController);
+        BlobMovementViewModel = new BlobMovementViewModel(BlobTempViewModel.blobTemp, BlobVolumeViewModel.blobSize, characterController);
 
-
-        blobVolumeViewModel.blobSize.Subscribe(_ => ChangeBlobSize(_));
-        ChangeBlobSize(blobVolumeViewModel.blobSize.Value);
-       // blobMovementViewModel.blobMovement.Subscribe(_ => BlobMovement(_));
-        
-        
-
-
+        BlobVolumeViewModel.blobSize.Subscribe(_ => ChangeBlobSize(_));
+        ChangeBlobSize(BlobVolumeViewModel.blobSize.Value);        
 
     }
 
-    
-    //private void BlobMovement(Vector3 _)
-    //{
-    //       //gameObject.transform.forward =_;
-    //     // characterController.Move(_ * Time.deltaTime);
-
-    //}
+    private void Update()
+    {
+        BlobMovementViewModel.Update();
+        BlobTempViewModel?.Update();
+        BlobVolumeViewModel?.Update();
+    }
 
 
 

@@ -12,16 +12,16 @@ public class CheckValues : MonoBehaviour
 
     private void Start()
     {
-        ReactiveProperty<float> blolbTemp = blob.blobTempViewModel.blobTemp;
-        blob.blobTempViewModel.blobTemp.Subscribe(_ =>
+        ReactiveProperty<float> blolbTemp = blob.BlobTempViewModel.blobTemp;
+        blob.BlobTempViewModel.blobTemp.Subscribe(_ =>
         {
             tempText.text = "Temp: " + _.ToString();
         });
-        blob.blobVolumeViewModel.blobVolume.Subscribe(_ =>
+        blob.BlobVolumeViewModel.blobVolume.Subscribe(_ =>
         {
             volumeText.text = "Volume: " + _.ToString();
         });
-        blob.blobVolumeViewModel.blobSize.Subscribe(_ =>
+        blob.BlobVolumeViewModel.blobSize.Subscribe(_ =>
         {
             sizeText.text = "Size: " + _.ToString();
         });

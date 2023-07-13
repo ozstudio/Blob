@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColdAreaViewModel
+public class WaterWallViewModel 
 {
     public void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
         {
-            other.GetComponent<BlobView>().BlobTempViewModel.ColdAreaTouchActions();
+            other.GetComponent<BlobView>().BlobMovementViewModel.WaterWallTouchAction();
         }
     }
 
@@ -16,7 +16,7 @@ public class ColdAreaViewModel
     {
         if (other.tag == "Player")
         {
-            other.GetComponent<BlobView>().BlobTempViewModel.ColdAreaEndTouchActions();
+            other.GetComponent<BlobView>().BlobMovementViewModel.WaterWallEndTouchAction();
         }
     }
 }

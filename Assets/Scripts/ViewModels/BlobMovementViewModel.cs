@@ -1,208 +1,210 @@
 using System;
-using System.Runtime.CompilerServices;
+using System.Collections;
+using System.Collections.Generic;
 using UniRx;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.UI;
 
 public class BlobMovementViewModel 
 {
-    public ReactiveProperty<Vector3> blobMovement;
     public ReactiveProperty<bool> isWall;
 
     private CharacterController characterController;
-    private Vector3 playerVelocity;
-    private bool groundedPlayer;
-    private float ySpeed;
-    private float jumpSpeed = 1f;
-    private float gravityValue = -20.81f;
 
-    private float _moveSpeed;
-    private float _maxSpeed;
-    private float _minSpeed;
-    private float _currentTemp;
-    private float _prevTemp;
-    private float _speedIncreaseFactor;
-    private float _maxJumpHeight;
+    //Jump Variables
+    private bool isGrounded => characterController.isGrounded;
+    private float jumpHeight;
+    private float jumpSpeed;
+    private bool isJump = false;
+
+    //Move Variables
+    private float horizontal = 0;
+
+    private float gravity = -9.81f;
+
+    private Vector3 dir;
+
+    private float startJumpHeight = 6f;
+    private float moveSpeed;
+    private float startSpeed;
+    private float maxSpeed;
+    private float minSpeed;
+    private float startTemp;
+    private float maxTemp;
+    private float minTemp;
+
     public bool isTouchingWall;
-    private Vector3 move;
 
-    
+    private float startSlideSpeed;
+    private float slideSpeed = 0;
+    private bool isSlide = false;
 
-    public BlobMovementViewModel(ReactiveProperty <float> blobTemp, CharacterController characterController)
+    private bool isAbove = false;
+
+    private bool isWaterWall = false;
+    private int waterWallMovementDirection;
+
+
+    public BlobMovementViewModel(ReactiveProperty<float> blobTemp, ReactiveProperty<float> blobSize,CharacterController characterController)
     {
-        blobMovement = new ReactiveProperty<Vector3>();
         isTouchingWall = false;
 
-        
-        
         this.characterController = characterController;
-       
-        _maxJumpHeight = GlobalModel.Instance.MaxJumpHeight;
-        _speedIncreaseFactor = GlobalModel.Instance.SpeedIncreaseFactor;
-        _maxSpeed = GlobalModel.Instance.StartBlobSpeed * 2;
-        _minSpeed = GlobalModel.Instance.StartBlobSpeed / 2;
-        _moveSpeed = GlobalModel.Instance.StartBlobSpeed;
-        _currentTemp = GlobalModel.Instance.StartBlobTemp;
 
-        _prevTemp = _currentTemp;
+        startJumpHeight = GlobalModel.Instance.StartJumpHeight;
+        jumpHeight = startJumpHeight;
+        jumpSpeed = gravity * Time.deltaTime;
+
+        maxSpeed = GlobalModel.Instance.MaxBlobSpeed;
+        minSpeed = GlobalModel.Instance.MinBlobSpeed;
+        startSpeed = GlobalModel.Instance.StartBlobSpeed;
+        moveSpeed = startSpeed;
+        maxTemp = GlobalModel.Instance.BoilingTemp;
+        minTemp = GlobalModel.Instance.FreezingTemp;
+        startTemp = GlobalModel.Instance.StartBlobTemp;
+
+        startSlideSpeed = GlobalModel.Instance.SlideSpeed;
+
 
         GameInput.Instance.OnJump += GameInput_OnJump;
         GameInput.Instance.OnMove += GameInput_OnMove;
 
-        
+        blobTemp.Subscribe(blobTemp => ChangeMoveSpeed(blobTemp));
+        blobSize.Subscribe(blobSize => ChangeJumpForce(blobSize));
 
-        var t = Observable.EveryUpdate().Subscribe(_ => {
-
-            if (characterController.isGrounded)
-            {
-                ySpeed = -1f;
-            };
-
-            RaycastHit hitSide;
-            if (Physics.Raycast(characterController.transform.position,
-              characterController.transform
-              .TransformDirection(Vector3.forward),out hitSide, characterController.transform.localScale.x/2 - 0.1f)
-            )
-            {
-                if(hitSide.transform.tag == "VerticalWall")
-                {
-                    isTouchingWall = true;
-                }
-            }
-            else
-            {
-                isTouchingWall = false;
-            }
-            
-
-            if ((characterController.collisionFlags & CollisionFlags.Above) != 0)
-            {
-                ySpeed = gravityValue * Time.deltaTime * 10;
-            }
-            
-
-
-            if (isTouchingWall)
-            {
-                ySpeed = 0;
-              
-            }
-            else
-            {
-                ySpeed += gravityValue * Time.deltaTime;
-               
-            }
-            
-            characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
-            characterController.transform.position =
-                new Vector3(characterController.transform.position.x,
-                characterController.transform.position.y,0);
-        });
-
-        blobTemp.Subscribe(blobTemp =>
-        {
-            _currentTemp = blobTemp;
-
-            if (_currentTemp > _prevTemp)
-            {
-                _moveSpeed += _speedIncreaseFactor;
-            }
-
-            if (_currentTemp < _prevTemp)
-            {
-                _moveSpeed -= _speedIncreaseFactor;
-
-            }
-
-        });
         CheckpointManager.Instance.OnGoToLastCheckpoint += CheckpointManagerOnGoToLastCheckpoint;
-    }
-
-    private void CheckpointManagerOnGoToLastCheckpoint(object sender, EventArgs e)
-    {
-        _moveSpeed = CheckpointManager.Instance.BlobMoveSpeedCheckpoint;
-    }
-
-    private void GameInput_OnMove(object sender, GameInput.MovementVectorEventArgs e)
-    {
-        PlayerMove(e.movementVector);
-    }
-
-    private void GameInput_OnJump(object sender, EventArgs e)
-    {
-        PlayerJump();
-    }
-
-    private float BlobSpeed()
-    {
-     
-        if (_moveSpeed >= _maxSpeed)
-        {
-            _moveSpeed = _maxSpeed;
-        }
-        if (_moveSpeed <= _minSpeed)
-        {
-            _moveSpeed = _minSpeed;
-        }
-        return _moveSpeed;
-
+        CheckpointManager.Instance.OnGoToCheckpointComplete += CheckpointManager_OnGoToCheckpointComplete; 
     }
 
     
 
-    private void PlayerJump()
+    public void Update()
     {
-
-        if (characterController.isGrounded)
+        if (isGrounded)
         {
-            float jumpHeight = _maxJumpHeight * characterController.transform.localScale.x;
-            ySpeed = Mathf.Sqrt(jumpHeight * -3.0f * gravityValue * jumpSpeed);
-        } else
-        {
-            return;
+            jumpSpeed = 0;
+            isAbove = true;
         }
 
-
-        characterController.Move(new Vector3(0, ySpeed, 0) * Time.deltaTime);
-
-    }
-
-    private void PlayerMove(Vector2 movement)
-    {
-        
-        groundedPlayer = characterController.isGrounded;
-        if (groundedPlayer && playerVelocity.y < 0)
+        if ((characterController.collisionFlags & CollisionFlags.Above) != 0 && isAbove)
         {
-            playerVelocity.y = 0f;
+            jumpSpeed = 0;
+            isJump = false;
+            isAbove = false;
         }
 
-        
-        
-
-        if (isTouchingWall)
+        if (isJump)
         {
-            if (movement.x < 0 || movement.x >0 )
-            {
-                move = new Vector3(0, 1, 0);
-            }
-            else
-                move = new Vector3(0, -1, 0);
-
+            jumpSpeed += Mathf.Sqrt(jumpHeight * (-1) * gravity);
+            isJump = false;
+        }
+        if (!isWaterWall)
+        {
+            jumpSpeed += gravity * Time.deltaTime;
         }
         else
         {
-            move = new Vector3(movement.x,0, 0);
+            jumpSpeed = 0;
+        }
+        
+        float movement;
+        if (isSlide)
+        {
+            movement = slideSpeed * Time.deltaTime;
+        }
+        else
+        {
+            movement = horizontal * moveSpeed * Time.deltaTime;;
         }
 
-        characterController.transform.rotation = Quaternion.LookRotation(new Vector2(movement.x,0));
-        characterController.Move(move * Time.deltaTime * BlobSpeed());
-        characterController.stepOffset = BlobSpeed() / 200;
+        if (isWaterWall)
+        {
+            dir = new Vector3(0, waterWallMovementDirection *  (movement), 0);
+        }
+        else
+        {
+            dir = new Vector3(movement, jumpSpeed * Time.deltaTime, 0);
+        }
+        characterController.Move(dir);
+    }
 
-        //if (move != Vector3.zero)
-        //{
-        //    blobMovement.Value = move;
-            
-        //}
+    private void CheckpointManagerOnGoToLastCheckpoint(object sender, EventArgs e)
+    {
+        characterController.enabled = false;
+        moveSpeed = CheckpointManager.Instance.BlobMoveSpeedCheckpoint;
+
+    }
+    private void CheckpointManager_OnGoToCheckpointComplete(object sender, EventArgs e)
+    {
+        characterController.enabled = true;
+    }
+
+    private void ChangeMoveSpeed(float blobTemp)
+    {
+        if (blobTemp > startTemp)
+        {
+            moveSpeed = startSpeed + (blobTemp - startTemp) / ((maxTemp - startTemp) / (maxSpeed - startSpeed));
+        }
+
+        if (blobTemp < startTemp)
+        {
+            moveSpeed = startSpeed + (blobTemp - startTemp) / ((startTemp - minTemp) / (startSpeed - minSpeed));
+        }
+        if(blobTemp == startTemp)
+        {
+            moveSpeed = startSpeed;
+        }
+    }
+    private void ChangeJumpForce(float blobSize)
+    {
+        jumpHeight =  startJumpHeight * blobSize;
+    }
+
+    private void GameInput_OnMove(object sender, GameInput.MovementVectorEventArgs e)
+    {
+        horizontal = e.movementVector.x;
+        if (horizontal != 0)
+        {
+            isSlide = false;
+        }
+        else
+        {
+            isSlide = true;
+        }
+
+        characterController.transform.rotation = Quaternion.LookRotation(new Vector2(horizontal*(-1), 0));
+    }
+
+    private void GameInput_OnJump(object sender, System.EventArgs e)
+    {
+        if (slideSpeed == 0 && isGrounded || isWaterWall)
+        {
+            isJump = true;
+            isWaterWall = false;
+        }
+    }
+
+    public void DryAreaTouchActions(int moveDir)
+    {
+        slideSpeed = startSlideSpeed * moveDir;
+    }
+
+    public void DryAreaEndTouchActions()
+    {
+        slideSpeed = 0;
+    }
+
+    public void WaterWallTouchAction()
+    {
+        isWaterWall = true;
+        waterWallMovementDirection = horizontal > 0?1:-1;
+        //characterController.slopeLimit = 90;
+
+    }
+
+    public void WaterWallEndTouchAction()
+    {
+        isWaterWall = false;
+        //characterController.slopeLimit = 30;
     }
 }

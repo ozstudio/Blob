@@ -9,6 +9,7 @@ public class CheckpointManager : MonoBehaviour
     private CheckpointView lastCheckpoint;
 
     public event EventHandler OnGoToLastCheckpoint;
+    public event EventHandler OnGoToCheckpointComplete;
 
     public float BlobTempCheckpoint { get; private set; }
     public float BlobVolumeCheckpoint { get; private set; } 
@@ -39,7 +40,7 @@ public class CheckpointManager : MonoBehaviour
         {
             OnGoToLastCheckpoint?.Invoke(this, EventArgs.Empty);
             blob.transform.position = new Vector3(lastCheckpoint.transform.position.x, lastCheckpoint.transform.position.y + blob.transform.localScale.y, lastCheckpoint.transform.position.z);
-            
+            OnGoToCheckpointComplete?.Invoke(this,EventArgs.Empty);
         }
     }
 }

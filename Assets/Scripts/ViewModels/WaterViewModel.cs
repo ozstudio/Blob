@@ -8,7 +8,7 @@ public class WaterViewModel
     {
         if (other.tag == "Player")
         {
-            other.GetComponent<BlobView>().blobVolumeViewModel.WaterTouchActions();
+            other.GetComponent<BlobView>().BlobVolumeViewModel.WaterTouchActions();
            
         }
     }

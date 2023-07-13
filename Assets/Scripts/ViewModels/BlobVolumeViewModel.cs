@@ -14,6 +14,8 @@ public class BlobVolumeViewModel
 
     private CoroutineRunner coroutineRunner;
 
+    private bool isGameEnd = false;
+
     public BlobVolumeViewModel(ReactiveProperty<float> blobTemp)
     {
         coroutineRunner = CoroutineRunner.Instance;
@@ -23,6 +25,15 @@ public class BlobVolumeViewModel
         CheckpointManager.Instance.OnGoToLastCheckpoint += CheckpointManager_OnGoToLastCheckpoint;
         blobTemp.Subscribe(_ => CheckVaporizeTemp(_));
     }
+
+    public void Update()
+    {
+        if (isGameEnd)
+        {
+            isGameEnd = false;
+            GameManager.Instance.TryGameOver();
+        }
+    } 
 
     private void CheckpointManager_OnGoToLastCheckpoint(object sender, System.EventArgs e)
     {
@@ -63,7 +74,7 @@ public class BlobVolumeViewModel
                 coroutineRunner.StopOneCoroutine(volumeDecreaseFromHighTemp);
                 volumeDecreaseFromHighTemp = null;
             }
-            GameManager.Instance.TryGameOver();
+            isGameEnd = false;
         }
     }
 

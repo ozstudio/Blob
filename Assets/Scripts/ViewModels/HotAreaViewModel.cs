@@ -9,7 +9,7 @@ public class HotAreaViewModel
     {
         if(other.tag == "Player")
         {
-            other.GetComponent<BlobView>().blobTempViewModel.HotAreaTouchActions();
+            other.GetComponent<BlobView>().BlobTempViewModel.HotAreaTouchActions();
         }
     }
 
@@ -17,7 +17,7 @@ public class HotAreaViewModel
     {
         if (other.tag == "Player")
         {
-            other.GetComponent<BlobView>().blobTempViewModel.HotAreaEndTouchActions();
+            other.GetComponent<BlobView>().BlobTempViewModel.HotAreaEndTouchActions();
         }
     }
 }
